@@ -59,7 +59,7 @@ function red( $value )
 	}
 	else
 	{
-		return $value;
+		return '<span style="color:red">' . $value . '</span>';
 	}
 }
 
