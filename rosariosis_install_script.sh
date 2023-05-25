@@ -33,8 +33,10 @@ location="localhost"
 dbUser="rosariosis_user"
 dbPass="rosariosis_user_password"
 dbName="rosariosis_db"
-dumpPath="$DatabaseDumpPath = '$( which pg_dump )';"
-converterPath="$wkhtmltopdfPath = '$( which wkhtmltopdf )';"
+dump=$( which pg_dump )
+dumpPath="DatabaseDumpPath = '$dump';"
+converter=$( which wkhtmltopdf )
+converterPath="wkhtmltopdfPath = '$converter';"
 
 # editing of the config variables
 # $DatabaseType = 'postgresql' #should be alright
@@ -49,8 +51,11 @@ sed "s/password_here/${dbPass}/" config.inc.sample.php > config.inc.php
 # $DatabaseName = 'rosariosis_db'
 sed "s/database_name_here/${dbName}/" config.inc.sample.php > config.inc.php
 # $DatabaseDumpPath = 'usr/bin/pg_dump' (usually)
-sed "s/$DatabaseDumpPath = '';/${dumpPath}/" config.inc.sample.php > config.inc.php
-sed "s/$wkhtmltopdfPath = '';/${converterPath}/" config.inc.sample.php > config.inc.php
+sed "s/DatabaseDumpPath = '';/${dumpPath}/" config.inc.sample.php > config.inc.php
+sed "s/wkhtmltopdfPath = '';/${converterPath}/" config.inc.sample.php > config.inc.php
+# add italian language, to add other languages check if the lang_LANG.uft8 folder is present in the ./locale/ folder,
+# then add , 'lang_LANG.uft8' to the language configuration line of the config.inc.php file
+sed "s/[ 'en_US.utf8' ]/[ 'en_US.utf8' , 'it_IT.utf8' ]" config.inc.sample.php > config.inc.php
 
 #----------
 
@@ -61,6 +66,8 @@ sudo -u postgres psql
 CREATE USER rosariosis_user WITH PASSWORD 'rosariosis_user_password';
 # -> will require password in input
 CREATE DATABASE rosariosis_db WITH ENCODING 'UTF8' OWNER rosariosis_user;
+#a:X dove X e' il numero di elementi che rimangono. Per togliere una riga dalla lista si elimina da s:N a b:1;
+UPDATE config SET config_value = 'a:10:{s:12:"School_Setup";b:1;s:8:"Students";b:1;s:5:"Users";b:1;s:10:"Scheduling";b:1;s:6:"Grades";b:1;s:10:"Attendance";b:1;s:11:"Eligibility";b:1;s:10:"Discipline";b:1;s:9:"Resources";b:1;s:6:"Custom";b:1;}' WHERE title = 'MODULES';
 \q
 
 #----------
